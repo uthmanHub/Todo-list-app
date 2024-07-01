@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1,
+    "task": "Finish the essay collaboration",
+    "createdDay": "Today",
+    "completed": false,
+    "subtasks": [
+      { "id": 1, "text": "Research topic", "completed": false },
+      { "id": 2, "text": "Write introduction", "completed": false },
+      { "id": 3, "text": "Conclusion", "completed": false }
+    ]
+  },
+  {
+    "id": 2,
+    "task": "Send collaboration files to Jerusha",
+    "createdDay": "Tuesday",
+    "completed": false,
+    "subtasks": []
+  },
+  {
+    "id": 3,
+    "task": "Finish the essay collaboration",
+    "createdDay": "Thursday",
+    "completed": false,
+    "subtasks": [
+      { "id": 1, "text": "Proofread", "completed": false },
+      { "id": 2, "text": "Format document", "completed": false }
+    ]
+  },
+  {
+    "id": 4,
+    "task": "Read next chapter of the book in Danish",
+    "createdDay": "Wednesday",
+    "completed": false,
+    "subtasks": [{ "id": 1, "text": "Read chapter", "completed": false }]
+  },
+  {
+    "id": 5,
+    "task": "Do the math for next Monday",
+    "createdDay": "Monday",
+    "completed": false,
+    "subtasks": []
+  },
+  {
+    "id": 6,
+    "task": "Send the finished assignment",
+    "createdDay": "Saturday",
+    "completed": true,
+    "subtasks": []
+  },
+  {
+    "id": 7,
+    "task": "Read English book chapter 5",
+    "createdDay": "Yesterday",
+    "completed": true,
+    "subtasks": []
+  }
+]

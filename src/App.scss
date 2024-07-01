@@ -1,0 +1,345 @@
+// Variables
+$background-dark: #131616;
+$primary-bg: #463b3f;
+$primary-pink: #e95886;
+$pink-bg: #d4507a;
+$checkbox-bg: #fc76a1;
+$font-color: #ffffff;
+$icon-color: #333;
+$border-color: gray;
+$hover-bg: #ccc;
+$checkmark-border: #000;
+$input-padding: 8px;
+$font-size: 16px;
+$border-radius: 20px;
+
+body {
+  background-color: $background-dark;
+}
+
+.task-board {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 50%;
+  margin: 0 auto;
+}
+
+h1 {
+  text-align: center;
+}
+
+.input-task-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+h2 {
+  text-align: left !important;
+}
+
+.input-task {
+  display: flex;
+  max-width: 100%;
+  width: fit-content;
+  padding: 0 10px;
+  // gap: 10px;
+  justify-content: space-between;
+  align-items: center;
+
+  input {
+    width: 80%;
+  }
+
+  button {
+    min-width: fit-content;
+  }
+}
+
+.input-subtask {
+  display: grid;
+  gap: 10px;
+  width: 80%;
+  margin: 10px auto;
+
+  input {
+    padding: $input-padding;
+    font-size: $font-size;
+    background-color: transparent;
+    border-radius: 10px;
+  }
+}
+
+//******************************
+//? CUSTOM INPUT PINK (subtask)
+//******************************
+
+.input-container {
+  position: relative;
+  display: inline-block;
+
+  input {
+    padding-left: 35px;
+    height: 30px;
+    background-color: transparent;
+    border: 2px solid $border-color;
+    border-radius: $border-radius;
+    color: $font-color;
+    font-size: $font-size;
+  }
+
+  button {
+    position: absolute;
+    left: 10px;
+    top: 0;
+    bottom: 0;
+    border: none;
+    background: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    outline: none;
+    padding: 0;
+
+    .icon {
+      color: $icon-color;
+      font-size: $font-size;
+      background-color: $pink-bg;
+      padding: 3px;
+      border-radius: 10px;
+    }
+  }
+}
+
+//**************
+//? ACTIVE TASK
+//**************
+
+.active-task-card {
+  width: 100%;
+}
+
+.active-task {
+  background-color: $primary-bg;
+  margin: 10px 0;
+  border-radius: $border-radius;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  justify-content: space-between;
+  padding: 10px;
+
+  &:hover .active-task-action-button {
+    display: flex;
+  }
+
+  &-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &-details {
+    display: flex;
+    flex-direction: column;
+
+    &-date {
+      display: flex;
+      gap: 10px;
+
+      span {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+      }
+    }
+  }
+
+  &-action {
+    display: flex;
+    align-items: center;
+  }
+
+  &-action-button {
+    display: none;
+
+    button {
+      background-color: transparent !important;
+      outline: none;
+      border: none;
+
+      .pencil {
+        color: $primary-pink;
+        width: 15px;
+        height: 15px;
+      }
+      .trash {
+        width: 15px;
+        height: 15px;
+        color: red;
+      }
+    }
+  }
+}
+
+.active-task-subtask {
+  background-color: $primary-bg;
+  margin: 10px 0 10px 6%;
+  border-radius: $border-radius;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  width: 85%;
+  flex-direction: column;
+
+  li {
+    margin: 10px 0;
+    list-style-type: none;
+  }
+}
+
+.active-task li {
+  margin: 10px 0;
+  list-style-type: none;
+}
+
+.chevron {
+  background-color: transparent;
+  outline: none;
+  border: none;
+}
+
+//*****************
+//? COMPLETED TASK
+//*****************
+
+.completed-task {
+  background-color: $primary-bg;
+  margin: 10px 0;
+  border-radius: $border-radius;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  gap: 10px;
+
+  &-input {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  &-details {
+    display: flex;
+    flex-direction: column;
+
+    ul {
+      list-style-type: none;
+    }
+  }
+
+  .completed-subtask-action {
+    display: flex;
+  }
+}
+
+//******************
+//? CUSTOM CHECKBOX
+//******************
+
+.custom-checkbox {
+  display: inline-block;
+  position: relative;
+  padding-left: 35px;
+  cursor: pointer;
+  font-size: 18px;
+  user-select: none;
+
+  input[type="checkbox"] {
+    display: none;
+  }
+
+  .checkmark {
+    position: absolute;
+    bottom: -13px;
+    right: 0px;
+    height: 20px;
+    width: 20px;
+    border: 3px solid $primary-pink;
+    border-radius: 30%;
+
+    &:after {
+      content: "";
+      position: absolute;
+      display: none;
+      left: 6px;
+      top: 3px;
+      width: 5px;
+      height: 10px;
+      border: solid $checkmark-border;
+      border-width: 0 3px 3px 0;
+      transform: rotate(45deg);
+    }
+  }
+
+  .checkmark-subtask {
+    position: absolute;
+    top: -11px;
+    right: 5px;
+    height: 20px;
+    width: 20px;
+    border: 3px solid $primary-pink;
+    border-radius: 30%;
+
+    &:after {
+      content: "";
+      position: absolute;
+      display: none;
+      left: 6px;
+      top: 3px;
+      width: 5px;
+      height: 10px;
+      border: solid $checkmark-border;
+      border-width: 0 3px 3px 0;
+      transform: rotate(45deg);
+    }
+  }
+
+  &:hover input ~ .checkmark {
+    background-color: $hover-bg;
+  }
+
+  input:checked ~ .checkmark {
+    background-color: $checkbox-bg;
+
+    &:after {
+      display: block;
+    }
+  }
+
+  input:checked ~ .checkmark-subtask {
+    background-color: $checkbox-bg;
+
+    &:after {
+      display: block;
+    }
+  }
+}
+
+//********************
+//? Mobile Adjustment
+//********************
+
+@media (width < 769px) {
+  .task-board {
+    max-width: 100%;
+    padding: 10px;
+  }
+
+  .active-task {
+    padding: 5px !important;
+  }
+}
