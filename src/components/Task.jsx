@@ -23,8 +23,9 @@ const App = () => {
   const [editSubtaskInputs, setEditSubtaskInputs] = useState([]);
   const [showTaskDetails, setShowTaskDetails] = useState(false);
   const taskInputRef = useRef(null);
+  const [draggedIndex, setDraggedIndex] = useState(null);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
 
-  // Save tasks to local storage whenever the tasks state changes
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }, [tasks]);
@@ -39,6 +40,12 @@ const App = () => {
     setSubtaskInputs(newSubtaskInputs);
   };
 
+  const handleEditSubtaskInputChange = (index, value) => {
+    const newEditSubtaskInputs = [...editSubtaskInputs];
+    newEditSubtaskInputs[index] = value;
+    setEditSubtaskInputs(newEditSubtaskInputs);
+  };
+
   const addSubtaskInput = () => {
     setSubtaskInputs([...subtaskInputs, ""]);
   };
@@ -51,7 +58,9 @@ const App = () => {
           .filter(subtask => subtask.trim() !== "")
           .map(subtask => ({ text: subtask, completed: false })),
         completed: false,
-        createdDay: new Date().toLocaleDateString("en-US", { weekday: "long" }),
+        createdDay: new Date().toLocaleDateString("en-US", {
+          weekday: "long",
+        }),
       };
       setTasks([...tasks, newTask]);
       setTaskInput("");
@@ -86,17 +95,62 @@ const App = () => {
     setTasks(newTasks);
   };
 
+  const handleSaveEditedTask = () => {
+    if (editTaskInput.trim()) {
+      const updatedTasks = [...tasks];
+      updatedTasks[editIndex] = {
+        ...updatedTasks[editIndex],
+        task: editTaskInput,
+        subtasks: editSubtaskInputs
+          .filter(subtask => subtask.trim() !== "")
+          .map((subtask, index) => ({
+            ...updatedTasks[editIndex].subtasks[index],
+            text: subtask,
+          })),
+      };
+      setTasks(updatedTasks);
+      setIsEditing(false);
+      setEditIndex(null);
+      setEditTaskInput("");
+      setEditSubtaskInputs([]);
+    }
+  };
+
   const activeTasks = tasks.filter(task => !task.completed);
   const completedTasks = tasks.filter(task => task.completed);
+
+  const handleDragStart = index => {
+    setDraggedIndex(index);
+  };
+
+  const handleDragOver = index => {
+    if (draggedIndex !== null && draggedIndex !== index) {
+      setHoveredIndex(index);
+    }
+  };
+
+  const handleDragEnd = () => {
+    if (draggedIndex !== null && hoveredIndex !== null) {
+      const updatedTasks = [...tasks];
+      const draggedTask = updatedTasks[draggedIndex];
+      updatedTasks.splice(draggedIndex, 1);
+      updatedTasks.splice(hoveredIndex, 0, draggedTask);
+      setTasks(updatedTasks);
+      setDraggedIndex(null);
+      setHoveredIndex(null);
+    }
+  };
+
+  const handleDrop = index => {
+    setHoveredIndex(index);
+  };
 
   return (
     <div className='task-board' style={{ padding: "" }}>
       <h1>To-Do List</h1>
 
-      {/* add task */}
       <div className='input-task-wrapper'>
         <div className='input-task'>
-          {/* main task field */}
           <div className='input-container'>
             <button onClick={addSubtaskInput}>
               <FaPlus className='icon' />{" "}
@@ -112,7 +166,6 @@ const App = () => {
           <button onClick={handleAddTask}>Add</button>
         </div>
 
-        {/* sub task field */}
         <div className='input-subtask'>
           {subtaskInputs.map((subtask, index) => (
             <input
@@ -126,14 +179,20 @@ const App = () => {
         </div>
       </div>
 
-      {/* Active Task */}
       <h2>Tasks - {activeTasks.length}</h2>
       <div className='active-task-card'>
         {activeTasks.map((task, index) => (
-          <div key={index} className=''>
+          <div
+            key={index}
+            className=''
+            draggable='true'
+            onDragStart={() => handleDragStart(index)}
+            onDragOver={() => handleDragOver(index)}
+            onDragEnd={handleDragEnd}
+            onDrop={() => handleDrop(index)}
+          >
             <div className='active-task'>
               <li className='active-task-input'>
-                {/* checkbox for complete task */}
                 <label className='custom-checkbox'>
                   <input
                     type='checkbox'
@@ -144,9 +203,16 @@ const App = () => {
                   <span className='checkmark'></span>
                 </label>
 
-                {/* active task details */}
                 <div className='active-task-details'>
-                  <span>{task.task}</span>
+                  {isEditing && editIndex === index ? (
+                    <input
+                      type='text'
+                      value={editTaskInput}
+                      onChange={e => setEditTaskInput(e.target.value)}
+                    />
+                  ) : (
+                    <span>{task.task}</span>
+                  )}
                   {task.subtasks.length > 0 ? (
                     <small className='active-task-details-date'>
                       <span>
@@ -174,12 +240,14 @@ const App = () => {
                 </div>
               </li>
 
-              {/* //*action Button */}
               <div className='active-task-action'>
                 <div className='active-task-action-button'>
                   <button onClick={() => handleEditTask(tasks.indexOf(task))}>
                     <FaPencil className='pencil' />
                   </button>
+                  {isEditing && editIndex === index && (
+                    <button onClick={handleSaveEditedTask}>Save</button>
+                  )}
                   <button onClick={() => handleRemoveTask(tasks.indexOf(task))}>
                     <FaTrash className='trash' />
                   </button>
@@ -195,9 +263,6 @@ const App = () => {
               </div>
             </div>
 
-            {/* DISPLAYING SUBTASK */}
-
-            {/* sub task map */}
             {task.subtasks.length > 0 && showTaskDetails && (
               <ul className='active-task-subtask'>
                 {task.subtasks.map((subtask, subIndex) => (
@@ -209,7 +274,6 @@ const App = () => {
                         : "none",
                     }}
                   >
-                    {/* checkbox for complete task */}
                     <div className='active-task-input'>
                       <label className='custom-checkbox'>
                         <input
@@ -225,19 +289,29 @@ const App = () => {
                         />
                         <span className='checkmark-subtask'></span>
                       </label>
-                      {subtask.text}
+                      {isEditing && editIndex === index ? (
+                        <input
+                          type='text'
+                          value={editSubtaskInputs[subIndex] || ""}
+                          onChange={e =>
+                            handleEditSubtaskInputChange(
+                              subIndex,
+                              e.target.value
+                            )
+                          }
+                        />
+                      ) : (
+                        subtask.text
+                      )}
                     </div>
                   </li>
                 ))}
               </ul>
             )}
-            {/* sub task end here */}
           </div>
         ))}
       </div>
 
-
-      {/* Completed Task Begin*/}
       <h2>Completed Tasks ({completedTasks.length})</h2>
       <div className=''>
         {completedTasks.map((task, index) => (
@@ -267,7 +341,6 @@ const App = () => {
                       {task.createdDay}
                     </span>
                   </small>
-                  {/* <span>{task.createdDay}</span> */}
                 </div>
               </div>
 
@@ -288,7 +361,6 @@ const App = () => {
               </div>
             </li>
 
-            {/* subtask COMPLETED*/}
             {task.subtasks.length > 0 && showTaskDetails && (
               <ul className='active-task-subtask'>
                 {task.subtasks.map((subtask, subIndex) => (
@@ -298,7 +370,6 @@ const App = () => {
                       textDecoration: "line-through",
                     }}
                   >
-                    {/* checkbox for complete task */}
                     <div className='active-task-input'>
                       <label className='custom-checkbox'>
                         <input
